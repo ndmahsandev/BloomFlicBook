@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
+import Link from 'next/link';
 import { FileUp, Sparkles, BookCopy, ArrowRight } from 'lucide-react';
 
 const Hero = () => {
@@ -52,15 +53,21 @@ const Hero = () => {
                     animate={{ opacity: 1, scale: 1 }}
                     transition={{ duration: 0.8, delay: 0.6 }}
                 >
-                    <button className="group relative px-8 py-4 bg-primary-600 text-white font-bold rounded-2xl flex items-center space-x-3 hover:translate-y-[-2px] hover:shadow-[0_8px_32px_rgba(14,165,233,0.35)] transition-all">
+                    <Link
+                        href="/dashboard/upload"
+                        className="group relative px-8 py-4 bg-primary-600 text-white font-bold rounded-2xl flex items-center space-x-3 hover:translate-y-[-2px] hover:shadow-[0_8px_32px_rgba(14,165,233,0.35)] transition-all"
+                    >
                         <span className="text-lg">Upload PDF Now</span>
                         <FileUp className="w-5 h-5 group-hover:rotate-12 transition-transform" />
-                    </button>
+                    </Link>
 
-                    <button className="px-8 py-4 bg-gray-100 dark:bg-white/5 border border-gray-200 dark:border-white/10 hover:bg-gray-200 dark:hover:bg-white/10 text-gray-900 dark:text-white font-bold rounded-2xl flex items-center space-x-2 transition-colors">
+                    <Link
+                        href="#features"
+                        className="px-8 py-4 bg-gray-100 dark:bg-white/5 border border-gray-200 dark:border-white/10 hover:bg-gray-200 dark:hover:bg-white/10 text-gray-900 dark:text-white font-bold rounded-2xl flex items-center space-x-2 transition-colors"
+                    >
                         <span>Explore Samples</span>
                         <ArrowRight className="w-4 h-4" />
-                    </button>
+                    </Link>
                 </motion.div>
 
                 {/* Dashboard Preview Animation */}

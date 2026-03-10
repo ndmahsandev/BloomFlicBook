@@ -7,7 +7,7 @@ import { ThemeProvider } from "@/components/ThemeProvider";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-    title: "FlipFlow - Interactive PDF Experience",
+    title: "Bloom FlipFlow - Interactive PDF Experience",
     description: "Experience the most realistic page-flip reader ever built. Turn your PDFs into interactive digital books.",
 };
 

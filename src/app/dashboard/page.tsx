@@ -105,7 +105,7 @@ export default function DashboardOverview() {
                     </div>
                     <div className="relative space-y-6">
                         <h3 className="text-3xl font-black text-white italic leading-tight">Unlock Professional <br /> Branding</h3>
-                        <p className="text-primary-100 font-medium leading-relaxed opacity-90">Remove the FlipFlow watermark and use your own custom domain for all books.</p>
+                        <p className="text-primary-100 font-medium leading-relaxed opacity-90">Remove the Bloom FlipFlow watermark and use your own custom domain for all books.</p>
                         <button className="w-full py-4 bg-white text-primary-600 font-black rounded-2xl hover:scale-105 transition-transform active:scale-95 flex items-center justify-center gap-2 shadow-2xl">
                             GO PRO NOW <ArrowUpRight size={18} />
                         </button>

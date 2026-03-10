@@ -2,6 +2,7 @@
 
 import React, { useState, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import Link from 'next/link';
 import {
     FileUp,
     FileText,
@@ -20,6 +21,7 @@ const UploadPage = () => {
     const [isProcessing, setIsProcessing] = useState(false);
     const [uploadStatus, setUploadStatus] = useState<'idle' | 'success' | 'error'>('idle');
     const [errorMessage, setErrorMessage] = useState('');
+    const [uploadedId, setUploadedId] = useState<string | null>(null);
 
     const onDrop = useCallback((e: React.DragEvent) => {
         e.preventDefault();
@@ -48,18 +50,42 @@ const UploadPage = () => {
         if (!file) return;
 
         setIsUploading(true);
-        // Simulate upload delay
-        await new Promise(r => setTimeout(r, 2000));
+        setUploadStatus('idle');
+        setErrorMessage('');
 
-        setIsUploading(false);
-        setIsProcessing(true);
+        const formData = new FormData();
+        formData.append('file', file);
 
-        // Simulate "Senior Architect" Conversion Logic
-        // In a real app, this calls an API route that uses Mammoth/pdf-lib
-        await new Promise(r => setTimeout(r, 3500));
+        try {
+            const response = await fetch('/api/upload', {
+                method: 'POST',
+                body: formData,
+            });
 
-        setIsProcessing(false);
-        setUploadStatus('success');
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(data.error || 'Upload failed');
+            }
+
+            // Success!
+            setIsUploading(false);
+            setIsProcessing(true);
+
+            // Artificial delay to show processing animation (senior architect wow factor)
+            await new Promise(r => setTimeout(r, 2000));
+
+            setIsProcessing(false);
+            setUploadStatus('success');
+            setUploadedId(data.flipbookId);
+
+        } catch (error: any) {
+            console.error('Upload Error:', error);
+            setErrorMessage(error.message || 'Error occurred during upload.');
+            setUploadStatus('error');
+            setIsUploading(false);
+            setIsProcessing(false);
+        }
     };
 
     return (
@@ -67,18 +93,18 @@ const UploadPage = () => {
             {/* Page Header */}
             <div className="flex items-center justify-between">
                 <div className="space-y-1">
-                    <h1 className="text-3xl font-bold tracking-tight text-white flex items-center gap-3 italic">
+                    <h1 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-white flex items-center gap-3 italic">
                         Upload Your Creation
                         <Sparkles className="w-6 h-6 text-amber-500 animate-pulse" />
                     </h1>
-                    <p className="text-gray-500 font-medium">Support for PDF, DOC, and DOCX documents up to 50MB.</p>
+                    <p className="text-gray-600 dark:text-gray-400 font-medium">Support for PDF, DOC, and DOCX documents up to 50MB.</p>
                 </div>
                 <div className="flex gap-4">
-                    <div className="px-6 py-2.5 bg-white/5 border border-white/10 rounded-2xl flex items-center gap-2 text-xs font-bold text-gray-400">
+                    <div className="px-6 py-2.5 bg-gray-100 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-2xl flex items-center gap-2 text-xs font-bold text-gray-500 dark:text-gray-400">
                         <CheckCircle2 size={14} className="text-green-500" />
                         OCR Enabled
                     </div>
-                    <div className="px-6 py-2.5 bg-white/5 border border-white/10 rounded-2xl flex items-center gap-2 text-xs font-bold text-gray-400">
+                    <div className="px-6 py-2.5 bg-gray-100 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-2xl flex items-center gap-2 text-xs font-bold text-gray-500 dark:text-gray-400">
                         <CheckCircle2 size={14} className="text-green-500" />
                         Auto-Flip Active
                     </div>
@@ -99,16 +125,19 @@ const UploadPage = () => {
                                     <CheckCircle2 size={40} className="text-green-500" />
                                 </div>
                                 <div className="space-y-3">
-                                    <h2 className="text-3xl font-extrabold text-white">Conversion Ready!</h2>
-                                    <p className="text-gray-400 font-medium max-w-md mx-auto">Your document has been professionally converted into an interactive flipbook.</p>
+                                    <h2 className="text-3xl font-extrabold text-gray-900 dark:text-white">Conversion Ready!</h2>
+                                    <p className="text-gray-600 dark:text-gray-400 font-medium max-w-md mx-auto">Your document has been professionally converted into an interactive flipbook.</p>
                                 </div>
                                 <div className="flex justify-center gap-4">
-                                    <button className="px-8 py-4 bg-white text-black font-bold rounded-2xl hover:bg-gray-200 transition-all active:scale-95 flex items-center gap-3">
+                                    <Link
+                                        href={`/dashboard/editor/${uploadedId || 'new'}`}
+                                        className="px-8 py-4 bg-primary-600 text-white font-bold rounded-2xl hover:opacity-90 transition-all active:scale-95 flex items-center gap-3"
+                                    >
                                         Open Editor <ArrowRight size={18} />
-                                    </button>
+                                    </Link>
                                     <button
                                         onClick={() => { setFile(null); setUploadStatus('idle'); }}
-                                        className="px-8 py-4 bg-white/5 border border-white/10 hover:bg-white/10 text-white font-bold rounded-2xl transition-all"
+                                        className="px-8 py-4 bg-gray-100 dark:bg-white/5 border border-gray-200 dark:border-white/10 hover:bg-gray-200 dark:hover:bg-white/10 text-gray-900 dark:text-white font-bold rounded-2xl transition-all"
                                     >
                                         Upload Another
                                     </button>
@@ -130,8 +159,8 @@ const UploadPage = () => {
                                             </div>
                                         </div>
                                         <div className="space-y-3">
-                                            <h3 className="text-2xl font-bold text-white italic tracking-tight">Hang tight, we are working our magic.</h3>
-                                            <p className="text-gray-500 text-sm max-w-xs font-medium italic">Converting your complex file into a high-performance 60fps digital experience.</p>
+                                            <h3 className="text-2xl font-bold text-gray-900 dark:text-white italic tracking-tight">Hang tight, we are working our magic.</h3>
+                                            <p className="text-gray-600 dark:text-gray-400 text-sm max-w-xs font-medium italic">Converting your complex file into a high-performance 60fps digital experience.</p>
                                         </div>
                                         <div className="w-64 h-2 bg-white/5 rounded-full overflow-hidden border border-white/5">
                                             <motion.div
@@ -142,6 +171,22 @@ const UploadPage = () => {
                                             />
                                         </div>
                                     </div>
+                                ) : uploadStatus === 'error' ? (
+                                    <div className="flex flex-col items-center justify-center space-y-10 text-center py-10">
+                                        <div className="w-20 h-20 bg-red-500/20 rounded-full flex items-center justify-center mx-auto shadow-[0_0_32px_rgba(239,44,44,0.3)]">
+                                            <AlertCircle size={40} className="text-red-500" />
+                                        </div>
+                                        <div className="space-y-3">
+                                            <h3 className="text-2xl font-bold text-gray-900 dark:text-white italic tracking-tight">Upload Failed</h3>
+                                            <p className="text-red-500 font-medium max-w-md mx-auto">{errorMessage || "Something went wrong during the upload process."}</p>
+                                        </div>
+                                        <button
+                                            onClick={() => { setFile(null); setUploadStatus('idle'); setErrorMessage(''); }}
+                                            className="px-8 py-4 bg-gray-100 dark:bg-white/5 border border-gray-200 dark:border-white/10 hover:bg-gray-200 dark:hover:bg-white/10 text-gray-900 dark:text-white font-bold rounded-2xl transition-all"
+                                        >
+                                            Try Again
+                                        </button>
+                                    </div>
                                 ) : file ? (
                                     <div className="flex flex-col items-center justify-center space-y-8 text-center py-10">
                                         <div className="w-20 h-24 bg-gradient-to-tr from-primary-600 to-indigo-500 rounded-xl relative shadow-2xl flex items-center justify-center overflow-hidden">
@@ -151,8 +196,8 @@ const UploadPage = () => {
                                             </div>
                                         </div>
                                         <div className="space-y-2">
-                                            <h3 className="text-2xl font-black text-white">{file.name}</h3>
-                                            <p className="text-gray-500 font-bold uppercase text-[10px] tracking-[0.3em]">Ready for professional processing</p>
+                                            <h3 className="text-2xl font-black text-gray-900 dark:text-white">{file.name}</h3>
+                                            <p className="text-gray-600 dark:text-gray-500 font-bold uppercase text-[10px] tracking-[0.3em]">Ready for professional processing</p>
                                         </div>
                                         <div className="flex gap-4">
                                             <button
@@ -163,7 +208,7 @@ const UploadPage = () => {
                                             </button>
                                             <button
                                                 onClick={() => setFile(null)}
-                                                className="p-4 bg-white/5 border border-white/10 hover:bg-white/10 rounded-2xl text-red-500 transition-all border border-transparent hover:border-red-500/30 active:scale-95"
+                                                className="p-4 bg-gray-100 dark:bg-white/5 border border-gray-200 dark:border-white/10 hover:bg-gray-200 dark:hover:bg-white/10 rounded-2xl text-red-500 transition-all active:scale-95"
                                             >
                                                 <X size={20} />
                                             </button>
@@ -171,12 +216,12 @@ const UploadPage = () => {
                                     </div>
                                 ) : (
                                     <div className="flex flex-col items-center justify-center space-y-8 text-center py-10 group cursor-pointer" onClick={() => document.getElementById('file-input')?.click()}>
-                                        <div className="w-24 h-24 bg-white/5 border border-white/10 rounded-[30px] flex items-center justify-center group-hover:scale-110 group-hover:border-primary-500/50 group-hover:bg-primary-500/5 transition-all duration-500">
+                                        <div className="w-24 h-24 bg-gray-100 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-[30px] flex items-center justify-center group-hover:scale-110 group-hover:border-primary-500/50 group-hover:bg-primary-500/5 transition-all duration-500">
                                             <FileUp size={40} className="text-gray-400 group-hover:text-primary-400 transition-colors" />
                                         </div>
                                         <div className="space-y-2">
-                                            <h3 className="text-2xl font-bold text-white group-hover:text-primary-400 transition-colors">Drag and drop your file</h3>
-                                            <p className="text-gray-500 font-medium">Or <span className="text-primary-400 underline decoration-primary-500/30 underline-offset-4">browse your computer</span></p>
+                                            <h3 className="text-2xl font-bold text-gray-900 dark:text-white group-hover:text-primary-400 transition-colors">Drag and drop your file</h3>
+                                            <p className="text-gray-600 dark:text-gray-500 font-medium">Or <span className="text-primary-400 underline decoration-primary-500/30 underline-offset-4">browse your computer</span></p>
                                         </div>
                                         <input
                                             id="file-input"
@@ -196,7 +241,7 @@ const UploadPage = () => {
                 <div className="lg:col-span-4 space-y-8">
                     <div className="p-8 bg-white/5 border border-white/10 rounded-[40px] space-y-6 overflow-hidden relative group">
                         <div className="absolute top-0 right-0 w-32 h-32 bg-primary-600/10 blur-3xl group-hover:bg-primary-600/20 transition-all" />
-                        <h4 className="text-xl font-bold flex items-center gap-3 text-white italic">
+                        <h4 className="text-xl font-bold flex items-center gap-3 text-gray-900 dark:text-white italic">
                             <FileText size={20} className="text-primary-400" />
                             Guidelines
                         </h4>
@@ -207,7 +252,7 @@ const UploadPage = () => {
                                 'Embedded links will be auto-detected.',
                                 'Optimized for mobile viewing out-of-box.'
                             ].map((tip, idx) => (
-                                <li key={idx} className="flex gap-4 text-sm font-medium text-gray-400 items-start italic leading-relaxed">
+                                <li key={idx} className="flex gap-4 text-sm font-medium text-gray-600 dark:text-gray-400 items-start italic leading-relaxed">
                                     <div className="mt-1.5 w-1.5 h-1.5 rounded-full bg-primary-600 shrink-0" />
                                     {tip}
                                 </li>
@@ -215,12 +260,12 @@ const UploadPage = () => {
                         </ul>
                     </div>
 
-                    <div className="p-1 border border-white/5 rounded-[40px] bg-gradient-to-tr from-indigo-500/20 to-primary-500/20">
-                        <div className="p-8 bg-[#0a0a0a] rounded-[38px] space-y-6">
-                            <h4 className="text-xl font-black text-white flex items-center gap-3">
+                    <div className="p-1 border border-gray-100 dark:border-white/5 rounded-[40px] bg-gradient-to-tr from-indigo-500/20 to-primary-500/20">
+                        <div className="p-8 bg-white dark:bg-[#0a0a0a] rounded-[38px] border border-gray-100 dark:border-transparent space-y-6">
+                            <h4 className="text-xl font-black text-gray-900 dark:text-white flex items-center gap-3">
                                 Pro Hack <Sparkles size={20} className="text-amber-500" />
                             </h4>
-                            <p className="text-sm text-gray-400 font-medium leading-relaxed italic">
+                            <p className="text-sm text-gray-600 dark:text-gray-400 font-medium leading-relaxed italic">
                                 "Use our DOCX to Flipbook feature for real estate brochures. It automatically aligns images for a pixel-perfect magazine look."
                             </p>
                             <div className="pt-2">

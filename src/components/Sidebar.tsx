@@ -34,7 +34,7 @@ const Sidebar = () => {
                     <div className="p-1.5 bg-primary-600 rounded-lg group-hover:scale-110 transition-transform">
                         <BookOpen className="w-5 h-5 text-white" />
                     </div>
-                    <span className="text-lg font-bold tracking-tight text-white group-hover:text-primary-400 transition-colors">FlipFlow</span>
+                    <span className="text-lg font-bold tracking-tight text-white group-hover:text-primary-400 transition-colors">Bloom FlipFlow</span>
                 </Link>
             </div>
 

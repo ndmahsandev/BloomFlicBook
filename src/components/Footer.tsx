@@ -17,7 +17,7 @@ const Footer = () => {
                             <div className="p-2 bg-gradient-to-tr from-primary-600 to-primary-400 rounded-xl">
                                 <BookOpen className="w-6 h-6 text-white" />
                             </div>
-                            <span className="text-2xl font-bold text-gray-900 dark:text-white tracking-tight italic">FlipFlow</span>
+                            <span className="text-2xl font-bold text-gray-900 dark:text-white tracking-tight italic">Bloom FlipFlow</span>
                         </Link>
                         <p className="max-w-md text-lg text-gray-600 dark:text-gray-400 font-medium leading-relaxed italic">
                             Empowering publishers to create the worlds most immersive
@@ -70,7 +70,7 @@ const Footer = () => {
                 </div>
 
                 <div className="pt-12 border-t border-gray-100 dark:border-white/5 flex flex-col md:flex-row items-center justify-between text-gray-500 font-medium text-sm gap-4">
-                    <p>© 2026 FlipFlow Inc. All rights reserved.</p>
+                    <p>© 2026 Bloom FlipFlow Inc. All rights reserved.</p>
                     <p className="underline underline-offset-4 decoration-primary-500/30">Built by Antigravity for the USER.</p>
                 </div>
             </div>

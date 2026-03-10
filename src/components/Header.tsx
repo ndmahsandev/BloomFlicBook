@@ -31,7 +31,7 @@ const Header = () => {
                     <div className="p-2 bg-gradient-to-tr from-primary-600 to-primary-400 rounded-xl group-hover:scale-110 transition-transform">
                         <BookOpen className="w-6 h-6 text-white" />
                     </div>
-                    <span className="text-xl font-bold tracking-tight text-gray-900 dark:text-white group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">FlipFlow</span>
+                    <span className="text-xl font-bold tracking-tight text-gray-900 dark:text-white group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">Bloom FlipFlow</span>
                 </Link>
 
                 {/* Desktop Nav */}
