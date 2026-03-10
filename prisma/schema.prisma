@@ -1,0 +1,72 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  passwordHash  String
+  name          String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  flipbooks     Flipbook[]
+}
+
+model Flipbook {
+  id            String    @id @default(cuid())
+  userId        String
+  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title         String
+  description   String?   @db.Text
+  pdfUrl        String    // Normalized PDF (intermediate or target)
+  originalUrl   String?   // For .doc, .docx
+  fileExtension String    @default("pdf") // "pdf", "doc", "docx"
+  fileSize      Int?
+  thumbnail     String?
+  visibility    String    @default("public")
+  status        String    @default("processing") // "processing", "ready", "failed"
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  pages         Page[]
+  analytics     Analytics[]
+}
+
+model Page {
+  id                 String              @id @default(cuid())
+  flipbookId         String
+  flipbook           Flipbook            @relation(fields: [flipbookId], references: [id], onDelete: Cascade)
+  pageNumber         Int
+  imageUrl           String
+  interactiveElements InteractiveElement[]
+  createdAt          DateTime            @default(now())
+}
+
+model InteractiveElement {
+  id        String @id @default(cuid())
+  pageId    String
+  page      Page   @relation(fields: [pageId], references: [id], onDelete: Cascade)
+  type      String
+  posX      Float
+  posY      Float
+  width     Float
+  height    Float
+  data      Json?
+  createdAt DateTime @default(now())
+}
+
+model Analytics {
+  id         String   @id @default(cuid())
+  flipbookId String
+  flipbook   Flipbook @relation(fields: [flipbookId], references: [id], onDelete: Cascade)
+  viewerId   String?
+  pageNumber Int?
+  timestamp  DateTime @default(now())
+}
